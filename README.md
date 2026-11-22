@@ -32,7 +32,7 @@ Open http://localhost:3000 in your browser.
 
 ## Live Demo
 
-Live deployment link: To be added after deployment.
+https://validaxis-demo.vercel.app/
 
 ## NPM Package
 
