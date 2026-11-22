@@ -1,0 +1,130 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ValidAxis Demo</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background: #f4f6fb;
+      margin: 0;
+      padding: 40px 16px;
+    }
+    .container {
+      max-width: 550px;
+      margin: auto;
+    }
+    h1 { text-align: center; color: #253b80; }
+    .subtitle { text-align: center; color: #666; }
+    .card {
+      background: white;
+      padding: 20px;
+      margin: 20px 0;
+      border-radius: 12px;
+      box-shadow: 0 3px 12px #00000012;
+    }
+    label { display: block; font-weight: bold; margin-bottom: 10px; }
+    input {
+      box-sizing: border-box;
+      width: 100%;
+      padding: 12px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+    button {
+      margin-top: 12px;
+      padding: 10px 18px;
+      background: #253b80;
+      color: white;
+      border: 0;
+      border-radius: 6px;
+      cursor: pointer;
+    }
+    .result { margin-top: 12px; font-weight: bold; }
+    .success { color: green; }
+    .error { color: #c62828; }
+    footer { text-align: center; margin-top: 30px; color: #666; }
+    a { color: #253b80; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>ValidAxis</h1>
+    <p class="subtitle">Indian Input Validation & Currency Formatting</p>
+
+    <div class="card">
+      <label for="mobile">Indian Mobile Number</label>
+      <input id="mobile" placeholder="9876543210">
+      <button onclick="check('mobile')">Validate Mobile</button>
+      <div id="mobile-result" class="result"></div>
+    </div>
+
+    <div class="card">
+      <label for="pincode">Indian PIN Code</label>
+      <input id="pincode" placeholder="500001">
+      <button onclick="check('pincode')">Validate PIN</button>
+      <div id="pincode-result" class="result"></div>
+    </div>
+
+    <div class="card">
+      <label for="pan">PAN Number</label>
+      <input id="pan" placeholder="ABCDE1234F">
+      <button onclick="check('pan')">Validate PAN</button>
+      <div id="pan-result" class="result"></div>
+    </div>
+
+    <div class="card">
+      <label for="inr">INR Currency Formatter</label>
+      <input id="inr" type="number" placeholder="125000">
+      <button onclick="check('inr')">Format INR</button>
+      <div id="inr-result" class="result"></div>
+    </div>
+
+    <footer>
+      Powered by the
+      <a href="https://www.npmjs.com/package/validaxis">ValidAxis npm package</a>
+    </footer>
+  </div>
+
+  <script>
+    async function check(type) {
+      const value = document.getElementById(type).value;
+      const result = document.getElementById(type + "-result");
+
+      result.textContent = "Checking...";
+      result.className = "result";
+
+      try {
+        const response = await fetch(
+          "/api/validate?type=" + encodeURIComponent(type) +
+          "&value=" + encodeURIComponent(value)
+        );
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "Request failed");
+        }
+
+        if (type === "inr") {
+          result.textContent = data.formatted;
+          result.className = "result success";
+        } else {
+          result.textContent = data.valid
+            ? "Valid format"
+            : "Invalid format";
+          result.className = data.valid
+            ? "result success"
+            : "result error";
+        }
+      } catch (error) {
+        result.textContent = error.message;
+        result.className = "result error";
+      }
+    }
+  </script>
+</body>
+</html>
